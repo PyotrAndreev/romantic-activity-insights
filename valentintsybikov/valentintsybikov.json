@@ -1,0 +1,32 @@
+{
+    "error": {
+        "error_code": 8,
+        "error_msg": "Invalid request: versions below 5.81 are deprecated. Version param should be passed as \"v\". \"version\" param is invalid and not supported. For more information go to https://vk.com/dev/constant_version_updates",
+        "request_params": [
+            {
+                "key": "domain",
+                "value": "valentintsybikov"
+            },
+            {
+                "key": "count",
+                "value": "40"
+            },
+            {
+                "key": "",
+                "value": ""
+            },
+            {
+                "key": "v",
+                "value": "5.52"
+            },
+            {
+                "key": "method",
+                "value": "wall.get"
+            },
+            {
+                "key": "oauth",
+                "value": "1"
+            }
+        ]
+    }
+}

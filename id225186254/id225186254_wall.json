@@ -1,0 +1,28 @@
+{
+    "error": {
+        "error_code": 15,
+        "error_msg": "Access denied: this profile is private",
+        "request_params": [
+            {
+                "key": "domain",
+                "value": "id225186254"
+            },
+            {
+                "key": "count",
+                "value": "40"
+            },
+            {
+                "key": "v",
+                "value": "5.81"
+            },
+            {
+                "key": "method",
+                "value": "wall.get"
+            },
+            {
+                "key": "oauth",
+                "value": "1"
+            }
+        ]
+    }
+}
