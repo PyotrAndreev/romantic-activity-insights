@@ -6,7 +6,7 @@ import re
 from datetime import datetime
 from dotenv import load_dotenv
 import os
-from tg_links import chats
+#from tg_links import chats
 
 from add_methods_dao import add_many_users_tg_chat, add_one_action_tg_interaction, add_one_tg_group, add_one_tg_message, add_one_tg_stats, add_one_user_tg
 from sql_enums import TgActionEnum
@@ -16,9 +16,9 @@ load_dotenv('.env.bot')
 API_HASH = os.getenv('API_HASH')
 API_ID = os.getenv('API_ID')
 
-'''chats = [
-  'cacscmawale'
-]'''
+chats = [
+  'poisk_knig_chat'
+]
 
 app = Client(
     "my_account",
@@ -112,7 +112,7 @@ async def main():
             try:
                 new_stat_id = await add_one_tg_stats(stats_data=statistics)
             except Exception as e:
-              print(f"Ошибка при обработке действия: {str(e)}")
+              print(f"Ошибка при обработке действия reactions: {str(e)}")
             message={
                 'chat_id': str(chat.id),
                 'id': str(action.id), 
@@ -139,7 +139,7 @@ async def main():
             try:
               new_tg_action = await add_one_action_tg_interaction(interaction_data=new_action)
             except Exception as e:
-                print(f"Ошибка при закладке события: {str(e)}")
+                print(f"Ошибка при закладке события add_one_action_tg_interaction: {str(e)}")
 
             
           if action.new_chat_members:
@@ -147,11 +147,24 @@ async def main():
             for member in action.new_chat_members:
               new_from = action.from_user.first_name if action.from_user else "Неизвестный"
               #print(f"{member.first_name} был добавлен в чат '{chat.title}', его добавил '{new_from}'")
+              tg_user={
+                'tg_id': str(action.from_user.id), 
+                'user_name': f'{action.from_user.username}',
+                'first_name': f'{action.from_user.first_name}',
+                'last_name': f'{action.from_user.last_name}',
+                #'last_online':member.user.last_online_date 
+                'last_online': dt
+              }
+              try:
+                new_tg_user_id = await add_one_user_tg(user_data=tg_user)
+              except Exception as e:
+                print(f"Ошибка при обработке юзера '{username}': {str(e)}")
+
               new_action={
                 'chat_id': str(chat.id), 
                 'action': TgActionEnum.add_user, 
                 'action_from': str(action.from_user.id), 
-                'action_to': str(member.id), 
+                #'action_to': str(member.id), 
                 'message_id': str(action.id),
                 'message_chat_id': str(chat.id),
                 'time': action.date
@@ -163,6 +176,19 @@ async def main():
 
           if action.left_chat_member:
             for member in action.left_chat_member:
+              tg_user={
+                'tg_id': str(action.from_user.id), 
+                'user_name': f'{action.from_user.username}',
+                'first_name': f'{action.from_user.first_name}',
+                'last_name': f'{action.from_user.last_name}',
+                #'last_online':member.user.last_online_date 
+                'last_online': dt
+              }
+              try:
+                new_tg_user_id = await add_one_user_tg(user_data=tg_user)
+              except Exception as e:
+                print(f"Ошибка при обработке юзера '{username}': {str(e)}")
+
               print(f"{action.left_chat_member.first_name} был удален из чата '{chat.title}' {action.date.strftime('%Y-%m-%d %H:%M:%S')}")
               new_action={
                 'chat_id': str(chat.id), 
@@ -176,7 +202,7 @@ async def main():
               try:
                   new_tg_action = await add_one_action_tg_interaction(interaction_data=new_action)
               except Exception as e:
-                  print(f"Ошибка при обработке действия: {str(e)}")
+                  print(f"Ошибка при обработке действия left: {str(e)}")
 
           if action.reply_to_message_id:
             print(f"{sender_username} ответил на сообщение от {action.reply_to_message_id}'")
@@ -193,7 +219,7 @@ async def main():
             try:
               await add_one_action_tg_interaction(new_action)
             except Exception as e:
-              print(f"Ошибка при обработке действия: {str(e)}")
+              print(f"Ошибка при обработке действия reply: {str(e)}")
 
           if action.text:
               mentions = mention_pattern.findall(action.text)
@@ -202,7 +228,7 @@ async def main():
                 print(f"{action.from_user.username} упомянул(а): {mentioned_users}")
                 new_action={
                   'chat_id': str(chat.id), 
-                  'action': TgActionEnum.reply, 
+                  'action': TgActionEnum.tag, 
                   'action_from': str(action.from_user.id), 
                   'message_id': str(action.id),
                   'message_chat_id': str(chat.id),
@@ -211,7 +237,7 @@ async def main():
                 try:
                   new_tg_action = await add_one_action_tg_interaction(interaction_data=new_action)
                 except Exception as e:
-                  print(f"Ошибка при обработке действия: {str(e)}")
+                  print(f"Ошибка при обработке действия упомянул(а): {str(e)}")
       except Exception as e:
           print(f"Ошибка при обработке действия: {str(e)}")
 
